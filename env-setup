@@ -1,0 +1,32 @@
+
+PYTHONPATH=${PYTHONPATH-""}
+PATH=${PATH-""}
+MANPATH=${MANPATH-""}
+
+export ITSM_ANSIBLE_HOME="/Users/jinlin/code/python"
+
+PREFIX_PYTHONPATH="$ITSM_ANSIBLE_HOME/lib"
+PREFIX_PATH="$ITSM_ANSIBLE_HOME/bin"
+PREFIX_MANPATH="$ITSM_ANSIBLE_HOME/docs/man"
+
+export PYTHONPATH="$PREFIX_PYTHONPATH:$PYTHONPATH"
+export PATH="$PREFIX_PATH:$PATH"
+export MANPATH="$PREFIX_MANPATH:$MANPATH"
+
+
+
+if [ "$verbosity" != silent ] ; then
+    cat <<- EOF
+	
+	Setting up Ansible to run out of checkout...
+	
+	PATH=$PATH
+	PYTHONPATH=$PYTHONPATH
+	MANPATH=$MANPATH
+	
+	Remember, you may wish to specify your host file with -i
+	
+	Done!
+	
+	EOF
+fi

@@ -1,0 +1,5 @@
+.python-version
+test_file
+tomcat-standalone
+.idea
+*.pyc
