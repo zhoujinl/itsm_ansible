@@ -72,3 +72,5 @@ itsm-ansible  -i "{
 测试提交1
 
 测试提交2 - 尝试两种merge方式
+
+测试提交3 - 一下子提交两个commit 
