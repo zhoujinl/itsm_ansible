@@ -1,5 +1,8 @@
 此项目只是用于测试从外部调用ansible的可能性.
 
+tiajiao 
+
+
 测试的时候请上传真是的``ctgmq-rocketmq-2.0.3.P2-ctgmq-rocketmq.tar.gz``
 测试命令行
 
