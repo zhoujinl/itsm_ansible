@@ -1,0 +1,9 @@
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+{% for item in groups["all"] %}
+{% if item != "localhost" and hostvars[item].ansible_default_ipv4 is defined %}
+
+{{ hostvars[item].ansible_default_ipv4.address }} {{item}}
+
+{% endif %}
+{% endfor %}

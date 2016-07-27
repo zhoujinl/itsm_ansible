@@ -1,0 +1,8 @@
+---
+broker_port:
+  - 10911
+  - 10912
+  - 10913
+
+nameserver_port:
+  - 9876

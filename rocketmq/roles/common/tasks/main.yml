@@ -1,0 +1,78 @@
+---
+
+- name: Install Java 1.7 and some basic dependencies
+  yum: name={{item}} state=present
+  with_items:
+   - java-1.7.0-openjdk
+
+
+- name: Hostname | Update the hostname (pt. 2) - (/etc/hostname)
+  copy:
+    content: "{{inventory_hostname}}{{'\n'}}"
+    dest: /etc/hostname
+    owner: root
+    group: root
+    mode: 0644
+
+- name: create group ctgmq
+  group: name=ctgmq state=present
+
+- name: create user ctgmq
+  user: name=ctgmq home=/home/ctgmq group=ctgmq password=$6$rounds=656000$LgubVCfmBZlA/VTP$3PT8YB6KLqxDZ5U4xQ1e3kqrf2aIMEsQ7K0cjFdf5li0wenukilWID3Wfry5ZJGG0trj4smhBOBU8z2wrz2Qu0
+
+- name: deploy iptables rules
+  template: src=iptables-save dest=/etc/sysconfig/iptables
+  notify: restart iptables
+
+- name: set hostname
+  hostname: name={{inventory_hostname}}
+
+- name: set hosts
+  template: src=hosts dest=/etc/hosts
+
+- name: Install the required packages in Redhat derivatives
+  yum: name=ntp state=installed
+
+- name: config ntp
+  template: src=ntp.conf dest=/etc/ntp.conf
+  notify: restart ntp service
+
+- name: config ulimits
+  pam_limits: domain={{item.name}} limit_type={{item.limit_type}} limit_item={{item.limit_item}} value={{item.value}} use_max=yes
+  with_items:
+    - name: '*'
+      limit_type: soft
+      limit_item: nofile
+      value: 65535
+    - name: '*'
+      limit_type: hard
+      limit_item: nofile
+      value: 65535
+    - name: '*'
+      limit_type: soft
+      limit_item: nproc
+      value: 65535
+    - name: '*'
+      limit_type: hard
+      limit_item: nproc
+      value: 65535
+    - name: '*'
+      limit_type: soft
+      limit_item: stack
+      value: 'unlimited'
+    - name: '*'
+      limit_type: hard
+      limit_item: stack
+      value: 'unlimited'
+
+- name: set bash_profile
+  template: src=bash_profile dest=/home/ctgmq/.bash_profile mode=0644 owner=ctgmq group=ctgmq
+
+- name: send install package
+  copy: src=ctgmq-rocketmq-2.0.3.P2-ctgmq-rocketmq.tar.gz  dest=/home/ctgmq owner=ctgmq group=ctgmq mode=0644
+
+- name: unzip install package
+  command: tar -zxf  /home/ctgmq/ctgmq-rocketmq-2.0.3.P2-ctgmq-rocketmq.tar.gz -C /home/ctgmq/
+  become_user: ctgmq
+  become: yes
+

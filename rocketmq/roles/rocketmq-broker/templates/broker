@@ -1,0 +1,30 @@
+
+{% set namesrvAddr = [] %}
+{% if groups["rocketmq-nameserver"] is defined %}
+{% set namesrvAddr = [] %}
+{% for item in groups["rocketmq-nameserver"]  %}
+
+
+{%- if namesrvAddr.append( hostvars[item].ansible_default_ipv4.address + ":9876") %}
+{%- endif %}
+{% endfor %}
+{% endif%}
+namesrvAddr={{namesrvAddr|join(';')}}
+brokerClusterName={{brokerClusterName}}
+brokerName={{brokerName}}
+brokerId={{ brokerId}}
+deleteWhen=04
+fileReservedTime=48
+brokerRole={{brokerRole}}
+flushDiskType=SYNC_FLUSH
+storeNodeName={{storeNodeName}}
+
+brokerIP1={{ansible_default_ipv4.address}}
+brokerIP2={{ansible_default_ipv4.address}}
+listenPort=10911
+haListenPort=10912
+processStoreListenPort=10913
+
+
+storePathRootDir=/home/ctgmq/logs/soft/testStore/store_master
+storePathCommitLog=/home/ctgmq/logs/soft/testStore/store_master/commitlog

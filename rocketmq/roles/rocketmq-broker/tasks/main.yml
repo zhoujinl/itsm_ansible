@@ -1,0 +1,40 @@
+---
+
+#- name: restart machine
+#  command: shutdown -r now "Ansible updates triggered"
+#  async: 0
+#  poll: 0
+#  ignore_errors: true
+#
+
+#
+#- name: Wait for server to restart
+#  local_action:
+#    module: wait_for
+#      host={{hostvars[item].ansible_host}}
+#      port={{hostvars[item].ansible_port}}
+#      delay=10
+#      timeout=3000
+#  with_items: groups["rocketmq-broker"]
+
+
+- name: Creates directory
+  file: path={{item}} state=directory mode=0644 owner=ctgmq group=ctgmq
+  with_items:
+    - /home/ctgmq/logs/soft/testStore/
+    - /home/ctgmq/config
+
+- name: create broker config file
+  template: src=broker dest=/home/ctgmq/config/broker.properties mode=0775 owner=ctgmq group=ctgmq
+
+- name: stop broker
+  command: "sh /home/ctgmq/ctgmq-rocketmq/bin/mqshutdown broker"
+  ignore_errors: true
+
+- name: sart broker
+  shell: "nohup sh /home/ctgmq/ctgmq-rocketmq/bin/mqbroker –c /home/ctgmq/config/broker.properties &"
+  become: yes
+  become_user: ctgmq
+  poll: 0
+  environment:
+    JAVA_HOME: "/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.101.x86_64/jre/"
